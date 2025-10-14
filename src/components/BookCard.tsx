@@ -23,8 +23,8 @@ export default function BookCard({ book }: BookCardProps) {
 
   return (
     <div className="book-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <Link href={`/books/${book.id}`}>
-        <div className="relative h-64 w-full">
+      <Link href={`/books/${book.id}`} className="block">
+        <div className="relative h-64 w-full cursor-pointer">
           <Image
             src={book.thumbnailUrl || "/images/placeholder-book.jpg"}
             alt={book.title}
@@ -47,7 +47,7 @@ export default function BookCard({ book }: BookCardProps) {
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <svg
-                  key={i}
+                  key={`star-${i}`}
                   className={`w-4 h-4 ${
                     i < Math.floor(book.rating || 0)
                       ? 'text-yellow-400'
@@ -70,9 +70,9 @@ export default function BookCard({ book }: BookCardProps) {
               ${book.price}
             </span>
             <div className="flex flex-wrap gap-1">
-              {book.categories.slice(0, 2).map(category => (
+              {book.categories.filter(category => category && category.trim()).slice(0, 2).map((category, index) => (
                 <span
-                  key={category}
+                  key={`category-${index}-${category}`}
                   className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
                 >
                   {category}
@@ -86,26 +86,20 @@ export default function BookCard({ book }: BookCardProps) {
               {book.shortDescription}
             </p>
           )}
-
-          <div className="flex space-x-2">
-            <Link
-              href={`/books/${book.id}`}
-              className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors text-center"
-            >
-              View Details
-            </Link>
-            <button
-              onClick={handleAddToCart}
-              className="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5h13M12 18a2 2 0 100 4 2 2 0 000-4zm6 0a2 2 0 100 4 2 2 0 000-4z" />
-              </svg>
-              Add to Cart
-            </button>
-          </div>
         </div>
       </Link>
+
+      <div className="px-4 pb-4">
+        <button
+          onClick={handleAddToCart}
+          className="w-full btn-primary text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center"
+        >
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5h13M12 18a2 2 0 100 4 2 2 0 000-4zm6 0a2 2 0 100 4 2 2 0 000-4z" />
+          </svg>
+          Add to Cart
+        </button>
+      </div>
     </div>
   );
 }
