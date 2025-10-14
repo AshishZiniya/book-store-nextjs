@@ -1,7 +1,9 @@
 // Move handler creation to route file since NextAuth v4 uses a different pattern
-import CredentialsProvider from "next-auth/providers/credentials";
-import type { UserRole } from "@/types";
-import { API_BASE_URL } from "@/lib/constants";
+import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+import type { SessionStrategy, NextAuthOptions } from 'next-auth';
+import type { UserRole } from '@/types';
+import { API_BASE_URL } from '@/lib/constants';
 
 // Helper type for extended user properties
 type ExtendedUser = {
@@ -12,16 +14,20 @@ type ExtendedUser = {
   updatedAt?: string;
 };
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
-      name: "credentials",
+      name: 'credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-        name: { label: "Name", type: "text" },
-        role: { label: "Role", type: "text" },
-        isRegister: { label: "Is Register", type: "text" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
+        name: { label: 'Name', type: 'text' },
+        role: { label: 'Role', type: 'text' },
+        isRegister: { label: 'Is Register', type: 'text' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -30,23 +36,23 @@ export const authOptions = {
 
         try {
           // Check if this is a registration request
-          const isRegister = credentials.isRegister === "true";
+          const isRegister = credentials.isRegister === 'true';
           const apiUrl = isRegister
             ? `${API_BASE_URL}/auth/register`
             : `${API_BASE_URL}/auth/login`;
 
           const response = await fetch(apiUrl, {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
             },
             body: JSON.stringify({
               email: credentials.email,
               password: credentials.password,
-              ...(credentials.isRegister === "true" && {
+              ...(credentials.isRegister === 'true' && {
                 name: credentials.name,
-                role: credentials.role || "USER",
+                role: credentials.role || 'USER',
               }),
             }),
           });
@@ -81,7 +87,7 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt' as SessionStrategy,
     maxAge: 7 * 24 * 60 * 60, // 24 hours x 7 days
   },
   jwt: {
@@ -113,8 +119,8 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signin",
+    signIn: '/auth/signin',
+    signOut: '/auth/signin',
   },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-development",
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
 };

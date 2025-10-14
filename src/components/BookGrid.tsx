@@ -30,8 +30,8 @@ export default function BookGrid() {
 
   return (
     <div id="books" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {filteredBooks.map(book => (
-        <BookCard key={book.id} book={book} />
+      {filteredBooks.map((book, index) => (
+        <BookCard key={book.id || index} book={book} />
       ))}
     </div>
   );

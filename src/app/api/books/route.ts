@@ -11,7 +11,7 @@ export async function GET() {
 
     // Convert JSON strings back to arrays for the frontend
     const formattedBooks = books.map(book => ({
-      id: parseInt(book.id), // Convert cuid to number for compatibility
+      id: book.id ? parseInt(book.id) : null, // Handle null ids gracefully
       title: book.title,
       isbn: book.isbn || '',
       pageCount: book.pageCount || 0,
