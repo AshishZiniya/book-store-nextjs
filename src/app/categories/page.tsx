@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,15 +7,22 @@ import booksData from '@/data/books.json';
 
 export default function CategoriesPage() {
   // Get unique categories from books
-  const categories = Array.from(
-    new Set(booksData.flatMap(book => book.categories))
-  ).sort();
+  const allCategories: string[] = booksData.flatMap(book => book.categories);
+  const uniqueCategories = Array.from(new Set(allCategories));
+  const categories = uniqueCategories.sort() as string[];
 
   // Group books by category
-  const booksByCategory = categories.reduce((acc, category) => {
-    acc[category] = booksData.filter(book =>
-      book.categories.includes(category)
-    );
+  const booksByCategory: Record<string, Book[]> = categories.reduce((acc, category: string) => {
+    acc[category] = booksData
+      .filter((book: any) => book.categories.includes(category))
+      .map((book: any, index: number) => ({
+        ...book,
+        id: index + 1, // Add sequential ID
+        price: 0, // Add default price
+        publishedDate: typeof book.publishedDate === 'object' && book.publishedDate?.$date
+          ? book.publishedDate.$date
+          : book.publishedDate?.toString() || '',
+      })) as Book[];
     return acc;
   }, {} as Record<string, Book[]>);
 
