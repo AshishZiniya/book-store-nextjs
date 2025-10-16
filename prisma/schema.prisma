@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_DATABASE_URL") // for migrations
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // NextAuth.js Models
