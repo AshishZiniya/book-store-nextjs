@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ToastProvider from '@/components/ToastProvider'
 import AuthProvider from '@/components/AuthProvider'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <SpeedInsights/>
         <AuthProvider>
           <GlobalProvider>
             <ToastProvider>
